@@ -32,20 +32,20 @@ def generate_response_matrix(dishi):
         a[na] = 0
         b[nb] = 0
         a += b
-        na &= nb
+        na = nb&na
         a[na] = np.nan
     else:
         pass
     index = group_test.index.values
-#    a = np.concatenate((a,np.array([index]).T),axis=1)
+    #    a = np.concatenate((a,np.array([index]).T),axis=1)
     meet_sheet = pd.DataFrame(a)
     print(meet_sheet)
     meet_sheet.set_index(index,drop=True,inplace=True)
     meet_sheet["地市"] = dishi
     meet_sheet["公司"] = group_test["公司"]
     print(meet_sheet.columns)
-#    meet_sheet.drop(meet_sheet.columns[-2],axis=1,inplace=True)
-#    meet_sheet.set_index(meet_sheet)
+    #    meet_sheet.drop(meet_sheet.columns[-2],axis=1,inplace=True)
+    #    meet_sheet.set_index(meet_sheet)
     print(meet_sheet)
     return meet_sheet
 
@@ -56,7 +56,10 @@ for dishi in lst:
     meet_sheet = generate_response_matrix(dishi)
     meet_sheet = pd.merge(zhp_org,meet_sheet,how='inner',on=['地市','公司'])
     initial = pd.concat([initial,meet_sheet],axis=0)
-zhp_org=pd.merge(zhp_org,initial,how='inner',on=["公司","地市"])
+zhp_org2=pd.merge(zhp_org,initial,how='inner',on=["公司","地市"])
+zhp_org2.drop(["var1_x":'var_9x'],axis=1,inplace=True)
+zhp_org3 = zhp_org2.drop(zhp_org2.columns[2:9],axis=1,inplace=False)
+zhp_org3.to_csv('zhp_after_regularization.csv')
         
 #initial = generate_response_matrix("白银市")
 #meet_sheet = generate_response_matrix("阿拉尔市")
